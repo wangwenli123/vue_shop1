@@ -5,7 +5,7 @@ import Home from '@/components/Home.vue'
 // 导入字体图标
 import '@/assets/fonts/iconfont.css'
 // 导入全局样式表
-import '@/assets/css/global.css'
+import '@/assets/css/global'
 
 // 挂载axios
 import axios from 'axios'
