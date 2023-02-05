@@ -52,13 +52,13 @@
               <template slot-scope="scope">
                 <!-- 循环渲染Tag标签 -->
                 <el-tag
-                  v-for="{ item, i } in scope.row.attr_vals"
+                  v-for="(item, i) in scope.row.attr_vals"
                   :key="i"
                   closable
                   @close="handleClose(i, scope.row)"
                   >{{ item }}</el-tag
                 >
-                <!--输入的文本框 -->
+                <!-- 输入的文本框 -->
                 <el-input
                   class="input-new-tag"
                   v-if="scope.row.inputVisible"
@@ -122,13 +122,13 @@
               <template slot-scope="scope">
                 <!-- 循环渲染Tag标签 -->
                 <el-tag
-                  v-for="{ item, i } in scope.row.attr_vals"
+                  v-for="(item, i) in scope.row.attr_vals"
                   :key="i"
                   closable
                   @close="handleClose(i, scope.row)"
                   >{{ item }}</el-tag
                 >
-                <!--输入的文本框 -->
+                <!-- 输入的文本框 -->
                 <el-input
                   class="input-new-tag"
                   v-if="scope.row.inputVisible"
@@ -301,6 +301,8 @@ export default {
       // 证明选中的不是三级分类
       if (this.selectedCateKeys.length !== 3) {
         this.selectedCateKeys = []
+        this.manyTableData = []
+        this.onlyTableData = []
         return
       }
 
@@ -327,7 +329,6 @@ export default {
       })
 
       console.log(res.data)
-
       if (this.activeName === 'many') {
         this.manyTableData = res.data
       } else {
@@ -427,40 +428,43 @@ export default {
       this.$message.success('删除参数成功！')
       this.getParamsData()
     },
-    // 文本框失去焦点 或按下了Enter都会触发
+    // 文本框失去焦点，或摁下了 Enter 都会触发
     async handleInputConfirm(row) {
       if (row.inputValue.trim().length === 0) {
         row.inputValue = ''
         row.inputVisible = false
         return
       }
-      // 如果没有return 则证明输入的内存 需要做后续处理
+      // 如果没有return，则证明输入的内容，需要做后续处理
       row.attr_vals.push(row.inputValue.trim())
       row.inputValue = ''
       row.inputVisible = false
-      // 需要发起请求 保存这次操作
+      // 需要发起请求，保存这次操作
       this.saveAttrVals(row)
     },
-    // 将对 attr_vals的操作 保存到数据库
+    // 将对 attr_vals 的操作，保存到数据库
     async saveAttrVals(row) {
+      // 需要发起请求，保存这次操作
       const { data: res } = await this.$http.put(
-        `categories/${this.cateId}/attributes/${row.attrId}`,
+        `categories/${this.cateId}/attributes/${row.attr_id}`,
         {
           attr_name: row.attr_name,
           attr_sel: row.attr_sel,
-          attr_vals: row.attr_vals.join(',')
+          attr_vals: row.attr_vals.join(' ')
         }
       )
+
       if (res.meta.status !== 200) {
-        return this.$message.error('修改参数项失败!')
+        return this.$message.error('修改参数项失败！')
       }
-      this.$message.success('修改参数成功!')
+
+      this.$message.success('修改参数项成功！')
     },
-    // 点击按钮 显示文本输入框
+    // 点击按钮，展示文本输入框
     showInput(row) {
       row.inputVisible = true
-      // 让文本框自动获取焦点
-      // nextTick 方法的作用 就是当页面上元素被重新渲染之后 才会指定回调函数中的代码
+      // 让文本框自动获得焦点
+      // $nextTick 方法的作用，就是当页面上元素被重新渲染之后，才会指定回调函数中的代码
       this.$nextTick((_) => {
         this.$refs.saveTagInput.$refs.input.focus()
       })
@@ -501,9 +505,11 @@ export default {
 .cat_opt {
   margin: 15px 0;
 }
+
 .el-tag {
   margin: 10px;
 }
+
 .input-new-tag {
   width: 120px;
 }

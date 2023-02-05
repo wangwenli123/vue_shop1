@@ -16,11 +16,17 @@ html,body,#app{
 }
 .el-table{
   margin-top: 15px;
-  font-size: 12px;
+  font-size: 13px;
 }
 .el-pagination{
   margin-top: 15px;
 }
 .el-cascader-menu{
   height: 200px;
+}
+.el-step{
+  margin: 15px 0;
+}
+.quill-editor{
+  min-height: 300px;
 }
